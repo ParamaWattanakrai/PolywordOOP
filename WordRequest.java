@@ -15,7 +15,6 @@ public class WordRequest {
         this.reference = reference;
     }
 
-    // Getters
     public RequestType getType() { return type; }
     public int getWordId() { return wordId; }
     public String getWriting() { return writing; }

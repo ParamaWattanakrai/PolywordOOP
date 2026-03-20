@@ -43,7 +43,6 @@ public class Main {
     }
 
     private static void testQuery(User user, Vocabulary v) {
-        // Implementation requirement: queryWord through User
         Word w = user.queryWord(v, "สวัสดี");
         if (w != null) {
             System.out.println("Query Result obtained via User:");
@@ -54,7 +53,7 @@ public class Main {
     private static void testDatasetManagement(User user, Vocabulary v) {
         user.createDataset("SEA_Phrases");
         
-        // 4. addWordToDataset using word objects retrieved via user.queryWord
+        // 4. addWordToDataset
         user.addWordToDataset(user.queryWord(v, "สวัสดี"), "SEA_Phrases");
         user.addWordToDataset(user.queryWord(v, "សួស្តី"), "SEA_Phrases");
         user.addWordToDataset(user.queryWord(v, "မင်္ဂလာပါ"), "SEA_Phrases");

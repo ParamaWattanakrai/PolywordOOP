@@ -1,148 +1,112 @@
 public class Main {
-
-    // Global instances for the demonstration
-    private static Vocabulary vocabulary = new Vocabulary();
-    private static User user = new User(1);
-    private static Admin admin = new Admin(100);
-    private static Linguist linguist = new Linguist(200);
-
     public static void main(String[] args) {
-        initializeSystem();
-        runUserAuthentication();
-        runUserSearch();
-        runAdminProposals();
-        runLinguistApproval();
-        runFinalVerification();
-        runDeletionDemonstration();
-        runDatasetAndExport();
+        Vocabulary vocabulary = new Vocabulary();
+        User user = new User(101);
+        Admin admin = new Admin(201);
+        Linguist linguist = new Linguist(301);
+
+        System.out.println("=== 1. & 2. Authentication ===");
+        testAuthentication(user);
+
+        System.out.println("\n=== Initializing Vocabulary ===");
+        setupInitialVocab(vocabulary);
+
+        System.out.println("\n=== 3. Query Word ===");
+        testQuery(vocabulary);
+
+        System.out.println("\n=== 4. & 5. Dataset Management ===");
+        testDatasetManagement(user, vocabulary);
+
+        System.out.println("\n=== 6. Export Dataset ===");
+        testExport(user, vocabulary);
+
+        System.out.println("\n=== 7., 8., & 9. Proposals ===");
+        testProposals(admin);
+
+        System.out.println("\n=== 10. & 11. Request Handling ===");
+        testRequestHandling(linguist, vocabulary);
     }
 
-    private static void initializeSystem() {
-        System.out.println("=== INITIALIZING SYSTEM ===");
-
-        vocabulary.newWord(
-            "สวย",
-            "/suːaj/",
-            "Beautiful; attractive in appearance.",
-            "Native Thai root word",
-            "Royal Institute Dictionary of Thailand"
-        );
-        vocabulary.newWord(
-            "ใจดี",
-            "/tɕaj diː/",
-            "Kind-hearted; generous and gentle in nature.",
-            "Thai compound: ใจ (heart) + ดี (good)",
-            "Royal Institute Dictionary of Thailand"
-        );
-        vocabulary.newWord(
-            "สงบ",
-            "/sa ŋòp/",
-            "Calm; peaceful and undisturbed.",
-            "Native Thai root word",
-            "Royal Institute Dictionary of Thailand"
-        );
-
-        vocabulary.newWord(
-            "မြတ်နိုး",
-            "/mjaʔ nó/",
-            "To cherish; to hold something dear with deep affection.",
-            "Burmese compound: မြတ် (precious) + နိုး (to value)",
-            "Myanmar Language Commission Dictionary"
-        );
-        vocabulary.newWord(
-            "ငြိမ်သက်",
-            "/ɲɪ̀ɪ̃ θɛʔ/",
-            "Serene; perfectly still and at peace.",
-            "Native Burmese root word",
-            "Myanmar Language Commission Dictionary"
-        );
+    private static void testAuthentication(User user) {
+        user.signUp("Parama", "pass123", "parama@uni.ac.th");
+        boolean login = user.signIn("Parama", "pass123");
+        System.out.println("Sign Up and Sign In successful: " + login);
     }
 
-    private static void runUserAuthentication() {
-        System.out.println("\n=== USE CASE: User Authentication ===");
-        String username = "polyglot_99";
-        String password = "securePassword123";
-        user.signUp(username, password, "user@example.com");
-        System.out.println("User registered successfully.");
-
-        boolean loginSuccess = user.signIn(username, password);
-        System.out.println("Login attempt (Correct credentials): " + (loginSuccess ? "Success" : "Failed"));
+    private static void setupInitialVocab(Vocabulary v) {
+        v.newWord("สวัสดี", "/sà.wàt.diː/", "Hello", "Thai greeting", "RID");
+        v.newWord("ขอบคุณ", "/khɔ̀ːp.khun/", "Thank you", "Thai gratitude", "RID");
+        v.newWord("សួស្តី", "/suəs.dəy/", "Hello", "Khmer greeting", "Khmer Dict");
+        v.newWord("សូមអរគុណ", "/soom aa-kun/", "Thank you", "Khmer gratitude", "Khmer Dict");
+        v.newWord("မင်္ဂလာပါ", "/mɪ̀ɴɡəlàbà/", "Hello", "Burmese greeting", "MLC");
+        v.newWord("ကျေးဇူးတင်ပါတယ်", "/tɕè.zú.tɪ̀ɴ.bà.dè/", "Thank you", "Burmese gratitude", "MLC");
     }
 
-    private static void runUserSearch() {
-        System.out.println("\n=== USE CASE 1: User Search ===");
-        Word found1 = vocabulary.queryWord("สวย");
-        if (found1 != null) {
-            System.out.println("User found Thai word 'สวย' via search. Details:\n" + found1.getInfo());
+    private static void testQuery(Vocabulary v) {
+        Word w = v.queryWord("สวัสดี");
+        if (w != null) {
+            System.out.println("Query Result:");
+            System.out.println(w.getInfo());
         }
     }
 
-    private static void runAdminProposals() {
-        System.out.println("\n=== USE CASE 2: Admin Proposals ===");
-
-        admin.proposeNewWord(
-            "ความรัก",
-            "/kʰwaːm ráːk/",
-            "Love; a deep feeling of affection and attachment.",
-            "Thai compound: ความ + รัก",
-            "Royal Institute Dictionary of Thailand"
-        );
-
-        admin.proposeEdit(
-            0,
-            "สวย",
-            "/suːaj/",
-            "Beautiful; attractive in appearance. Often used for scenery.",
-            "Native Thai root word",
-            "Royal Institute Dictionary of Thailand (Updated Edition)"
-        );
-    }
-
-    private static void runLinguistApproval() {
-        System.out.println("\n=== USE CASE 3: Linguist Approval ===");
-        System.out.println("Requests in queue: " + Admin.requestQueue.size());
-        linguist.approveRequests(vocabulary);
-    }
-
-    private static void runFinalVerification() {
-        System.out.println("\n=== USE CASE 4: Verification ===");
-        Word kwamrak = vocabulary.queryWord("ความรัก");
-        if (kwamrak != null) System.out.println("ความรัก Status: Approved and Found (ID: " + kwamrak.getId() + ")");
-    }
-
-    private static void runDeletionDemonstration() {
-        System.out.println("\n=== USE CASE: Deletion Demonstration ===");
+    private static void testDatasetManagement(User user, Vocabulary v) {
+        user.createDataset("SEA_Phrases");
         
-        Word toDelete = vocabulary.queryWord("สงบ");
-        if (toDelete != null) {
-            int id = toDelete.getId();
-            System.out.println("Admin proposing deletion for word: " + toDelete.getWriting() + " (ID: " + id + ")");
+        // 4. addWordToDataset (Using objects from vocabulary)
+        user.addWordToDataset(v.queryWord("สวัสดี"), "SEA_Phrases");
+        user.addWordToDataset(v.queryWord("សួស្តី"), "SEA_Phrases");
+        user.addWordToDataset(v.queryWord("မင်္ဂလာပါ"), "SEA_Phrases");
+        user.addWordToDataset(v.queryWord("ขอบคุณ"), "SEA_Phrases");
+        System.out.println("Added 4 existing words to dataset.");
+
+        // 5. removeWordFromDataset
+        user.removeWordFromDataset(v.queryWord("ขอบคุณ"), "SEA_Phrases");
+        System.out.println("Removed 'ขอบคุณ' from dataset.");
+    }
+
+    private static void testExport(User user, Vocabulary v) {
+        Dataset ds = user.getDatasetByName("SEA_Phrases");
+        if (ds != null) {
+            // Correctly adding more vocabs by registering them in Vocabulary first
+            v.newWord("သူငယ်ချင်း", "/θəŋèdʑɪ́ɴ/", "Friend", "Burmese", "MLC");
+            v.newWord("មិត្តភក្តိ", "/mɨt pʰeak/", "Friend", "Khmer", "Khmer Dict");
             
-            admin.proposeDelete(id);
+            // Adding the newly registered words to the dataset
+            ds.addWord(v.queryWord("သူငယ်ချင်း"));
+            ds.addWord(v.queryWord("មិត្តភក្តိ"));
             
-            System.out.println("Linguist reviewing delete request...");
-            linguist.approveRequests(vocabulary);
-            
-            Word check = vocabulary.queryWord("สงบ");
-            System.out.println("Searching for 'สงบ' after deletion: " + (check == null ? "Not Found (Success)" : "Found (Failure)"));
+            ds.exportCSV();
+            System.out.println("Exported " + ds.getName() + ".csv with " + ds.getWordSet().size() + " words.");
         }
     }
 
-    private static void runDatasetAndExport() {
-        System.out.println("\n=== USE CASE 5: Dataset & Export ===");
-        String setName = "ThaiAndBurmeseWords";
-        user.createDataset(setName);
-
-        Word w1 = vocabulary.queryWord("สวย");
-        Word w2 = vocabulary.queryWord("ใจดี");
+    private static void testProposals(Admin admin) {
+        // 7. proposeEditWord
+        admin.proposeEdit(0, "สวัสดีครับ", "/sà.wàt.diː.khráp/", "Hello (Polite)", "Thai", "RID");
         
-        if (w1 != null) user.addWordToDataset(w1, setName);
-        if (w2 != null) user.addWordToDataset(w2, setName);
+        // 8. proposeNewWord
+        admin.proposeNewWord("စားပြီးပြီလား", "/sàː.pîː.pīː.láː/", "Have you eaten?", "Thai small talk", "General");
+        
+        // 9. proposeDeleteWord
+        admin.proposeDelete(2);
+        
+        System.out.println("Current Pending Requests: " + Admin.requestQueue.size());
+    }
 
-        Dataset userSet = user.getDatasetByName(setName);
-        if (userSet != null) {
-            userSet.exportCSV();
-            System.out.println("Exported " + userSet.getWordSet().size() + " words to '" + setName + ".csv'");
+    private static void testRequestHandling(Linguist linguist, Vocabulary v) {
+        if (Admin.requestQueue.isEmpty()) return;
+
+        // 10. ApproveRequest
+        WordRequest reqToApprove = Admin.requestQueue.get(0);
+        linguist.approveRequest(reqToApprove, v);
+        System.out.println("Approved Request Type: " + reqToApprove.getType());
+
+        // 11. rejectRequest
+        if (!Admin.requestQueue.isEmpty()) {
+            WordRequest reqToReject = Admin.requestQueue.get(0);
+            linguist.rejectRequest(reqToReject);
+            System.out.println("Rejected Request Type: " + reqToReject.getType());
         }
     }
 }

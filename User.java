@@ -23,6 +23,10 @@ public class User {
         return false;
     }
 
+    public Word queryWord(Vocabulary vocabulary, String keyword) {
+        return vocabulary.queryWord(keyword);
+    }
+
     public void createDataset(String datasetName) {
         if (getDatasetByName(datasetName) != null) return;
         datasetList.add(new Dataset(this, datasetName));

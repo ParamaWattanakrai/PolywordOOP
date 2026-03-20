@@ -11,10 +11,10 @@ public class Main {
         System.out.println("\n=== Initializing Vocabulary ===");
         setupInitialVocab(vocabulary);
 
-        System.out.println("\n=== 3. Query Word ===");
-        testQuery(vocabulary);
+        System.out.println("\n=== 3. Query Word (via User) ===");
+        testQuery(user, vocabulary);
 
-        System.out.println("\n=== 4. & 5. Dataset Management ===");
+        System.out.println("\n=== 4. & 5. Dataset Management (via User Query) ===");
         testDatasetManagement(user, vocabulary);
 
         System.out.println("\n=== 6. Export Dataset ===");
@@ -42,10 +42,11 @@ public class Main {
         v.newWord("ကျေးဇူးတင်ပါတယ်", "/tɕè.zú.tɪ̀ɴ.bà.dè/", "Thank you", "Burmese gratitude", "MLC");
     }
 
-    private static void testQuery(Vocabulary v) {
-        Word w = v.queryWord("สวัสดี");
+    private static void testQuery(User user, Vocabulary v) {
+        // Implementation requirement: queryWord through User
+        Word w = user.queryWord(v, "สวัสดี");
         if (w != null) {
-            System.out.println("Query Result:");
+            System.out.println("Query Result obtained via User:");
             System.out.println(w.getInfo());
         }
     }
@@ -53,42 +54,34 @@ public class Main {
     private static void testDatasetManagement(User user, Vocabulary v) {
         user.createDataset("SEA_Phrases");
         
-        // 4. addWordToDataset (Using objects from vocabulary)
-        user.addWordToDataset(v.queryWord("สวัสดี"), "SEA_Phrases");
-        user.addWordToDataset(v.queryWord("សួស្តី"), "SEA_Phrases");
-        user.addWordToDataset(v.queryWord("မင်္ဂလာပါ"), "SEA_Phrases");
-        user.addWordToDataset(v.queryWord("ขอบคุณ"), "SEA_Phrases");
-        System.out.println("Added 4 existing words to dataset.");
+        // 4. addWordToDataset using word objects retrieved via user.queryWord
+        user.addWordToDataset(user.queryWord(v, "สวัสดี"), "SEA_Phrases");
+        user.addWordToDataset(user.queryWord(v, "សួស្តី"), "SEA_Phrases");
+        user.addWordToDataset(user.queryWord(v, "မင်္ဂလာပါ"), "SEA_Phrases");
+        user.addWordToDataset(user.queryWord(v, "ขอบคุณ"), "SEA_Phrases");
+        System.out.println("Added 4 existing words to dataset via User query.");
 
         // 5. removeWordFromDataset
-        user.removeWordFromDataset(v.queryWord("ขอบคุณ"), "SEA_Phrases");
+        user.removeWordFromDataset(user.queryWord(v, "ขอบคุณ"), "SEA_Phrases");
         System.out.println("Removed 'ขอบคุณ' from dataset.");
     }
 
     private static void testExport(User user, Vocabulary v) {
         Dataset ds = user.getDatasetByName("SEA_Phrases");
-        if (ds != null) {
-            // Correctly adding more vocabs by registering them in Vocabulary first
-            v.newWord("သူငယ်ချင်း", "/θəŋèdʑɪ́ɴ/", "Friend", "Burmese", "MLC");
-            v.newWord("មិត្តភក្តိ", "/mɨt pʰeak/", "Friend", "Khmer", "Khmer Dict");
-            
-            // Adding the newly registered words to the dataset
-            ds.addWord(v.queryWord("သူငယ်ချင်း"));
-            ds.addWord(v.queryWord("មិត្តភក្តိ"));
-            
-            ds.exportCSV();
-            System.out.println("Exported " + ds.getName() + ".csv with " + ds.getWordSet().size() + " words.");
-        }
+
+        v.newWord("သူငယ်ချင်း", "/θəŋèdʑɪ́ɴ/", "Friend", "Burmese", "MLC");
+        v.newWord("មិត្តភក្តိ", "/mɨt pʰeak/", "Friend", "Khmer", "Khmer Dict");
+        
+        ds.addWord(user.queryWord(v, "သူငယ်ချင်း"));
+        ds.addWord(user.queryWord(v, "មិត្តភក្តိ"));
+        
+        ds.exportCSV();
+        System.out.println("Exported " + ds.getName() + ".csv with " + ds.getWordSet().size() + " words.");
     }
 
     private static void testProposals(Admin admin) {
-        // 7. proposeEditWord
         admin.proposeEdit(0, "สวัสดีครับ", "/sà.wàt.diː.khráp/", "Hello (Polite)", "Thai", "RID");
-        
-        // 8. proposeNewWord
         admin.proposeNewWord("စားပြီးပြီလား", "/sàː.pîː.pīː.láː/", "Have you eaten?", "Thai small talk", "General");
-        
-        // 9. proposeDeleteWord
         admin.proposeDelete(2);
         
         System.out.println("Current Pending Requests: " + Admin.requestQueue.size());

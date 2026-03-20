@@ -1,8 +1,12 @@
 public class WordRequest {
-    private int wordId; // -1 indicates a NEW word request
-    private String writing, ipa, definition, etymology, reference;
+    public enum RequestType { NEW, EDIT, DELETE }
 
-    public WordRequest(int wordId, String writing, String ipa, String definition, String etymology, String reference) {
+    private int wordId;
+    private String writing, ipa, definition, etymology, reference;
+    private RequestType type;
+
+    public WordRequest(RequestType type, int wordId, String writing, String ipa, String definition, String etymology, String reference) {
+        this.type = type;
         this.wordId = wordId;
         this.writing = writing;
         this.ipa = ipa;
@@ -12,8 +16,8 @@ public class WordRequest {
     }
 
     // Getters
+    public RequestType getType() { return type; }
     public int getWordId() { return wordId; }
-    public boolean isNewWordRequest() { return wordId == -1; }
     public String getWriting() { return writing; }
     public String getIpa() { return ipa; }
     public String getDefinition() { return definition; }

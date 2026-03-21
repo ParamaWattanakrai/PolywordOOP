@@ -44,7 +44,7 @@ public class Linguist extends Admin {
         if (success) {
             request.setStatus(WordRequest.Status.APPROVED);
             requestQueue.remove(request);
-            System.out.println("Successfully approved and applied request: " + request.getType());
+            System.out.println("Approved and applied request: " + request.getType());
         } else {
             System.out.println("Failed to apply request. Target Word ID may not exist.");
         }

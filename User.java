@@ -32,9 +32,8 @@ public class User {
         datasetList.add(new Dataset(this, datasetName));
     }
 
-    public void deleteDataset(String datasetName) {
-        if (getDatasetByName(datasetName) != null) return;
-        datasetList.remove(new Dataset(this, datasetName));
+    public void deleteDataset(Dataset dataset) {
+        datasetList.remove(dataset);
     }
 
     public void addWordToDataset(Word word, String datasetName) {

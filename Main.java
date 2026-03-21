@@ -79,24 +79,24 @@ public class Main {
     }
 
     private static void testProposals(Admin admin) {
-        admin.proposeEdit(0, "สวัสดีครับ", "/sà.wàt.diː.khráp/", "Hello (Polite)", "Thai", "RID");
+        admin.proposeEditWord(0, "สวัสดีครับ", "/sà.wàt.diː.khráp/", "Hello (Polite)", "Thai", "RID");
         admin.proposeNewWord("စားပြီးပြီလား", "/sàː.pîː.pīː.láː/", "Have you eaten?", "Thai small talk", "General");
-        admin.proposeDelete(2);
+        admin.proposeDeleteWord(2);
         
         System.out.println("Current Pending Requests: " + Admin.requestQueue.size());
     }
 
     private static void testRequestHandling(Linguist linguist, Vocabulary v) {
-        if (Admin.requestQueue.isEmpty()) return;
+        if (Linguist.requestQueue.isEmpty()) return;
 
         // 10. ApproveRequest
-        WordRequest reqToApprove = Admin.requestQueue.get(0);
+        WordRequest reqToApprove = Linguist.requestQueue.get(0);
         linguist.approveRequest(reqToApprove, v);
         System.out.println("Approved Request Type: " + reqToApprove.getType());
 
         // 11. rejectRequest
-        if (!Admin.requestQueue.isEmpty()) {
-            WordRequest reqToReject = Admin.requestQueue.get(0);
+        if (!Linguist.requestQueue.isEmpty()) {
+            WordRequest reqToReject = Linguist.requestQueue.get(0);
             linguist.rejectRequest(reqToReject);
             System.out.println("Rejected Request Type: " + reqToReject.getType());
         }
